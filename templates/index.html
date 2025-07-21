@@ -1,50 +1,155 @@
-<!-- templates/index.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Jugnu Soda's & More</title>
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-  <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jugnu Soda's & More</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
-  <header>
-    <h1>Jugnu Soda's & More</h1>
-    <p>Sparkling varieties of digestive soda</p>
-  </header>
+    <header>
+        <h1>Jugnu Soda's & More</h1>
+        <p>Sparkling varieties of digestive soda</p>
+    </header>
 
-  <form method="POST" action="/place_order">
-    {% for category, subcategories in menu.items() %}
-      <h2>{{ category }}</h2>
+    <main>
+        <form id="order-form" method="POST" action="/place_order">
+            <section class="menu-section">
+                <h2>Soda Section (₹25)</h2>
 
-      {% for subcategory, items in subcategories.items() %}
-        {% if subcategory %}
-          <h3>{{ subcategory }}</h3>
-        {% endif %}
+                <div class="category">
+                    <h3>Masala Masti</h3>
+                    {% for item in menu.masala_masti %}
+                        <label>
+                            <input type="checkbox" name="items" value="{{ item }} - ₹25">
+                            {{ item }}
+                        </label><br>
+                    {% endfor %}
+                </div>
 
-        <div class="items-grid">
-          {% for item in items %}
-            <div class="item-card">
-              <p><strong>{{ item.item_name }}</strong></p>
-              <p>₹{{ item.price }}</p>
-              <input type="checkbox" name="items[]" value="{{ item.item_name }}|{{ item.price }}" onchange="updateTotal()">
+                <div class="category">
+                    <h3>Natural</h3>
+                    {% for item in menu.natural %}
+                        <label>
+                            <input type="checkbox" name="items" value="{{ item }} - ₹25">
+                            {{ item }}
+                        </label><br>
+                    {% endfor %}
+                </div>
+
+                <div class="category">
+                    <h3>Ayurvedic</h3>
+                    {% for item in menu.ayurvedic %}
+                        <label>
+                            <input type="checkbox" name="items" value="{{ item }} - ₹25">
+                            {{ item }}
+                        </label><br>
+                    {% endfor %}
+                </div>
+
+                <h2>Non-Alcoholic Section (₹20)</h2>
+                <div class="category">
+                    {% for item in menu.non_alcoholic %}
+                        <label>
+                            <input type="checkbox" name="items" value="{{ item }} - ₹20">
+                            {{ item }}
+                        </label><br>
+                    {% endfor %}
+                </div>
+
+                <h2>Samosa Pav</h2>
+                <div class="category">
+                    <h3>Regular</h3>
+                    {% for item, price in menu.samosa_pav_regular.items() %}
+                        <label>
+                            <input type="checkbox" name="items" value="{{ item }} - ₹{{ price }}">
+                            {{ item }} - ₹{{ price }}
+                        </label><br>
+                    {% endfor %}
+                    <h3>Jain</h3>
+                    {% for item, price in menu.samosa_pav_jain.items() %}
+                        <label>
+                            <input type="checkbox" name="items" value="{{ item }} - ₹{{ price }}">
+                            {{ item }} - ₹{{ price }}
+                        </label><br>
+                    {% endfor %}
+                </div>
+
+                <h2>Buns</h2>
+                <div class="category">
+                    {% for item, price in menu.buns.items() %}
+                        <label>
+                            <input type="checkbox" name="items" value="{{ item }} - ₹{{ price }}">
+                            {{ item }} - ₹{{ price }}
+                        </label><br>
+                    {% endfor %}
+                </div>
+
+                <h2>Chocolate Cold Cocoa</h2>
+                <div class="category">
+                    {% for item, price in menu.cold_cocoa.items() %}
+                        <label>
+                            <input type="checkbox" name="items" value="{{ item }} - ₹{{ price }}">
+                            {{ item }} - ₹{{ price }}
+                        </label><br>
+                    {% endfor %}
+                </div>
+
+                <h2>Brownies</h2>
+                <div class="category">
+                    {% for item, price in menu.brownies.items() %}
+                        <label>
+                            <input type="checkbox" name="items" value="{{ item }} - ₹{{ price }}">
+                            {{ item }} - ₹{{ price }}
+                        </label><br>
+                    {% endfor %}
+                </div>
+            </section>
+
+            <div class="total-section">
+                <p><strong>Total Price: ₹<span id="total-price">0</span></strong></p>
             </div>
-          {% endfor %}
-        </div>
-      {% endfor %}
-    {% endfor %}
 
-    <div style="text-align: center; margin-top: 20px;">
-      <p><strong>Total:</strong> ₹<span id="total">0</span></p>
+            <div class="qr-section">
+                <p>Scan to Pay via UPI:</p>
+                <img src="{{ url_for('static', filename='qr/site_qr.png') }}" alt="UPI QR Code" width="200">
+            </div>
 
-      <label for="payment_mode">Payment Mode:</label>
-      <select name="payment_mode" required>
-        <option value="UPI">UPI</option>
-        <option value="Cash">Cash</option>
-      </select>
-    </div>
+            <div class="form-actions">
+                <button type="submit">Place Order</button>
+            </div>
+        </form>
+    </main>
 
-    <button type="submit" class="btn-order">Place Order</button>
-  </form>
+    <script>
+        const itemCheckboxes = document.querySelectorAll('input[name="items"]');
+        const totalPriceElement = document.getElementById('total-price');
+        const form = document.getElementById('order-form');
+
+        function calculateTotal() {
+            let total = 0;
+            itemCheckboxes.forEach(checkbox => {
+                if (checkbox.checked) {
+                    const value = checkbox.value;
+                    const price = parseInt(value.split('₹')[1]);
+                    total += price;
+                }
+            });
+            totalPriceElement.textContent = total;
+        }
+
+        itemCheckboxes.forEach(checkbox => {
+            checkbox.addEventListener('change', calculateTotal);
+        });
+
+        // 🔧 Add total_price to form before submission
+        form.addEventListener('submit', function (e) {
+            const hiddenInput = document.createElement('input');
+            hiddenInput.type = 'hidden';
+            hiddenInput.name = 'total_price';
+            hiddenInput.value = totalPriceElement.textContent;
+            form.appendChild(hiddenInput);
+        });
+    </script>
 </body>
 </html>
