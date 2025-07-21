@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Order Dashboard – Jugnu Soda's & More</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <style>
+    body {
+      background-color: #fff9db;
+      font-family: Arial, sans-serif;
+    }
+
+    h1 {
+      text-align: center;
+      color: #f7c600;
+      margin-top: 30px;
+    }
+
+    table {
+      width: 90%;
+      margin: 30px auto;
+      border-collapse: collapse;
+      background-color: white;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+
+    th, td {
+      padding: 12px 16px;
+      border-bottom: 1px solid #ddd;
+      text-align: center;
+    }
+
+    th {
+      background-color: #f7c600;
+      color: black;
+    }
+
+    tr:hover {
+      background-color: #f0f0f0;
+    }
+
+    .back-link {
+      text-align: center;
+      margin-top: 20px;
+    }
+
+    .back-link a {
+      background: #f7c600;
+      padding: 10px 20px;
+      border-radius: 6px;
+      color: black;
+      text-decoration: none;
+    }
+
+    .back-link a:hover {
+      background-color: #ffe100;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>📋 Order Dashboard</h1>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Item</th>
+        <th>Price</th>
+        <th>Payment Mode</th>
+        <th>Time</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for order in orders %}
+      <tr>
+        <td>{{ order[1] }}</td>
+        <td>₹{{ "%.2f"|format(order[2]) }}</td>
+        <td>{{ order[3] }}</td>
+        <td>{{ order[4] }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <div class="back-link">
+    <a href="/">← Back to Homepage</a>
+  </div>
+
+</body>
+</html>

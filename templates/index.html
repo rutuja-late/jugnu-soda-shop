@@ -1,0 +1,50 @@
+<!-- templates/index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Jugnu Soda's & More</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</head>
+<body>
+  <header>
+    <h1>Jugnu Soda's & More</h1>
+    <p>Sparkling varieties of digestive soda</p>
+  </header>
+
+  <form method="POST" action="/place_order">
+    {% for category, subcategories in menu.items() %}
+      <h2>{{ category }}</h2>
+
+      {% for subcategory, items in subcategories.items() %}
+        {% if subcategory %}
+          <h3>{{ subcategory }}</h3>
+        {% endif %}
+
+        <div class="items-grid">
+          {% for item in items %}
+            <div class="item-card">
+              <p><strong>{{ item.item_name }}</strong></p>
+              <p>₹{{ item.price }}</p>
+              <input type="checkbox" name="items[]" value="{{ item.item_name }}|{{ item.price }}" onchange="updateTotal()">
+            </div>
+          {% endfor %}
+        </div>
+      {% endfor %}
+    {% endfor %}
+
+    <div style="text-align: center; margin-top: 20px;">
+      <p><strong>Total:</strong> ₹<span id="total">0</span></p>
+
+      <label for="payment_mode">Payment Mode:</label>
+      <select name="payment_mode" required>
+        <option value="UPI">UPI</option>
+        <option value="Cash">Cash</option>
+      </select>
+    </div>
+
+    <button type="submit" class="btn-order">Place Order</button>
+  </form>
+</body>
+</html>
