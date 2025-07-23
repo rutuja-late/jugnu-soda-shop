@@ -1,50 +1,93 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Thank You – Jugnu Soda's & More</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Order Received - Jugnu Soda's & More</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
   <style>
-    .thankyou-container {
+    .thank-you-container {
       text-align: center;
-      padding: 100px 20px;
-      background-color: #fff9db;
+      padding: 2rem;
+      background-color: #fffbe6;
+      border-radius: 1rem;
+      box-shadow: 0 0 15px rgba(0,0,0,0.1);
+      max-width: 600px;
+      margin: 2rem auto;
     }
-
-    .thankyou-container h1 {
-      font-size: 40px;
-      color: #f7c600;
-      margin-bottom: 20px;
+    .thank-you-container h1 {
+      color: #ffbb00;
+      font-size: 2rem;
     }
-
-    .thankyou-container p {
-      font-size: 20px;
+    .qr-section {
+      margin-top: 1.5rem;
+    }
+    .qr-section img {
+      width: 200px;
+      height: auto;
+      border-radius: 1rem;
+    }
+    .order-summary {
+      text-align: left;
+      margin-top: 2rem;
+      padding: 1rem;
+      background: #fff;
+      border-radius: 1rem;
+    }
+    .order-summary h3 {
       color: #333;
     }
-
-    .btn-home {
-      margin-top: 30px;
-      padding: 12px 24px;
-      font-size: 16px;
-      background-color: #f7c600;
-      border: none;
-      color: black;
-      border-radius: 6px;
-      text-decoration: none;
+    .order-summary ul {
+      list-style: none;
+      padding: 0;
     }
-
-    .btn-home:hover {
-      background-color: #ffe100;
+    .order-summary li {
+      display: flex;
+      justify-content: space-between;
+      margin: 0.25rem 0;
+    }
+    .total {
+      font-weight: bold;
+      color: #111;
+      border-top: 1px solid #ddd;
+      padding-top: 0.5rem;
+      margin-top: 0.5rem;
     }
   </style>
 </head>
 <body>
+  <div class="thank-you-container">
+    <h1>Thank You for Ordering! 🥳</h1>
 
-  <div class="thankyou-container">
-    <h1>🎉 Order Confirmed!</h1>
-    <p>Thank you for placing your order at <strong>Jugnu Soda's & More</strong>.<br>We’re already shaking it up!</p>
-    <a href="/" class="btn-home">Place Another Order</a>
+    <p>Your order has been received at <strong>Jugnu Soda's & More</strong>.</p>
+
+    {% if payment_mode == 'UPI' %}
+      <div class="qr-section">
+        <p>Please pay ₹{{ total }} via UPI before pickup:</p>
+        <img src="{{ url_for('static', filename='qr/site_qr.png') }}" alt="UPI QR Code" />
+        <p><strong>Scan & Pay</strong></p>
+      </div>
+    {% else %}
+      <p><strong>Pay ₹{{ total }} in cash</strong> at the counter during pickup.</p>
+    {% endif %}
+
+    <div class="order-summary">
+      <h3>Order Summary:</h3>
+      <ul>
+        {% for item, quantity in order.items() %}
+          <li>
+            <span>{{ item }}</span>
+            <span>x{{ quantity }}</span>
+          </li>
+        {% endfor %}
+        <li class="total">
+          <span>Total</span>
+          <span>₹{{ total }}</span>
+        </li>
+      </ul>
+    </div>
+
+    <p>Enjoy your drinks and snacks! 💛</p>
   </div>
-
 </body>
 </html>

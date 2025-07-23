@@ -2,89 +2,82 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Order Dashboard – Jugnu Soda's & More</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard - Jugnu Soda's & More</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
   <style>
     body {
-      background-color: #fff9db;
-      font-family: Arial, sans-serif;
+      background-color: #fffbe6;
+      font-family: 'Segoe UI', sans-serif;
+      margin: 0;
+      padding: 1rem;
     }
-
     h1 {
       text-align: center;
-      color: #f7c600;
-      margin-top: 30px;
+      color: #ffbb00;
+      margin-bottom: 1.5rem;
     }
-
-    table {
-      width: 90%;
-      margin: 30px auto;
-      border-collapse: collapse;
-      background-color: white;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    .orders-container {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      max-width: 800px;
+      margin: auto;
     }
-
-    th, td {
-      padding: 12px 16px;
-      border-bottom: 1px solid #ddd;
-      text-align: center;
+    .order-card {
+      background: #fff;
+      padding: 1rem;
+      border-left: 5px solid #ffbb00;
+      border-radius: 1rem;
+      box-shadow: 0 0 10px rgba(0,0,0,0.05);
     }
-
-    th {
-      background-color: #f7c600;
-      color: black;
+    .order-header {
+      display: flex;
+      justify-content: space-between;
+      font-weight: bold;
+      margin-bottom: 0.5rem;
+      color: #333;
     }
-
-    tr:hover {
-      background-color: #f0f0f0;
+    .order-items {
+      list-style: none;
+      padding-left: 0;
+      margin: 0.5rem 0;
     }
-
-    .back-link {
-      text-align: center;
-      margin-top: 20px;
+    .order-items li {
+      display: flex;
+      justify-content: space-between;
+      margin: 0.2rem 0;
+      color: #444;
     }
-
-    .back-link a {
-      background: #f7c600;
-      padding: 10px 20px;
-      border-radius: 6px;
-      color: black;
-      text-decoration: none;
-    }
-
-    .back-link a:hover {
-      background-color: #ffe100;
+    .order-total {
+      text-align: right;
+      font-weight: bold;
+      margin-top: 0.5rem;
+      color: #000;
     }
   </style>
 </head>
 <body>
-
-  <h1>📋 Order Dashboard</h1>
-
-  <table>
-    <thead>
-      <tr>
-        <th>Item</th>
-        <th>Price</th>
-        <th>Payment Mode</th>
-        <th>Time</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for order in orders %}
-      <tr>
-        <td>{{ order[1] }}</td>
-        <td>₹{{ "%.2f"|format(order[2]) }}</td>
-        <td>{{ order[3] }}</td>
-        <td>{{ order[4] }}</td>
-      </tr>
-      {% endfor %}
-    </tbody>
-  </table>
-
-  <div class="back-link">
-    <a href="/">← Back to Homepage</a>
+  <h1>Order Dashboard</h1>
+  <div class="orders-container">
+    {% for order in orders %}
+    <div class="order-card">
+      <div class="order-header">
+        <span>Order ID: {{ order.id }}</span>
+        <span>{{ order.timestamp.strftime('%Y-%m-%d %H:%M:%S') }}</span>
+      </div>
+      <ul class="order-items">
+        {% for item, qty in order.items.items() %}
+        <li>
+          <span>{{ item }}</span>
+          <span>x{{ qty }}</span>
+        </li>
+        {% endfor %}
+      </ul>
+      <div class="order-total">Total: ₹{{ order.total }}</div>
+      <div>Payment: <strong>{{ order.payment_mode }}</strong></div>
+    </div>
+    {% endfor %}
   </div>
-
 </body>
 </html>

@@ -1,35 +1,57 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Jugnu Soda's & More</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <style>
-        body { font-family: Arial; padding: 20px; background-color: #fff8dc; }
-        h1, h2 { color: #d4af37; }
-        h3 { margin-top: 30px; }
-        .item-section { margin-bottom: 20px; }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Jugnu Soda's & More</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <script src="{{ url_for('static', filename='js/main.js') }}" defer></script>
+  <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/favicon.png') }}">
 </head>
 <body>
-    <h1>Jugnu Soda's & More</h1>
-    <h2>Order Your Favorites</h2>
-    <form action="/place_order" method="POST">
+  <header class="header">
+    <img src="{{ url_for('static', filename='images/logo1.jpg') }}" alt="Jugnu Logo" class="logo">
+    <div class="title-tagline">
+      <h1>Jugnu Soda's & More</h1>
+      <p class="tagline">Sparkling varieties of digestive soda</p>
+    </div>
+  </header>
+
+  <main>
+    <form id="orderForm" method="POST" action="/place_order">
+      <section class="menu-section">
         {% for section, items in menu.items() %}
-            <div class="item-section">
-                <h3>{{ section.replace("_", " ").title() }}</h3>
-                {% for item, price in items.items() %}
-                    <div>
-                        <label>
-                            <input type="checkbox" name="items[]" value="{{ item }}">
-                            {{ item }} - ₹{{ price }}
-                        </label>
-                        <input type="number" name="quantities[]" min="1" value="1">
-                    </div>
-                {% endfor %}
-            </div>
+          <h2 class="section-title">{{ section }}</h2>
+          <div class="cards-container">
+            {% for item, price in items.items() %}
+              <div class="card">
+                <h3>{{ item }}</h3>
+                <p class="price">₹{{ price }}</p>
+                <div class="quantity">
+                  <button type="button" onclick="decreaseQty('{{ item }}')">−</button>
+                  <input type="number" name="items[{{ item }}]" id="qty-{{ item }}" value="0" min="0" readonly />
+                  <button type="button" onclick="increaseQty('{{ item }}')">+</button>
+                </div>
+              </div>
+            {% endfor %}
+          </div>
         {% endfor %}
-        <br>
-        <button type="submit">Place Order</button>
+      </section>
+
+      <section class="payment-section">
+        <h2>Select Payment Mode</h2>
+        <label><input type="radio" name="payment_mode" value="Cash" checked> Cash</label>
+        <label><input type="radio" name="payment_mode" value="UPI"> UPI</label>
+      </section>
+
+      <div class="place-order">
+        <button type="submit" id="orderBtn">Place Order</button>
+      </div>
     </form>
+  </main>
+
+  <footer>
+    <p>&copy; 2025 Jugnu Soda's & More. All rights reserved.</p>
+  </footer>
 </body>
 </html>
